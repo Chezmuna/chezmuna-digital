@@ -12,13 +12,16 @@ function Field({ f: [k, l, t], d }) {
 }
 export default async function Admin({ searchParams }) {
   const q = await searchParams;
+  const missing = ['DATABASE_URL', 'AUTH_SECRET', 'ADMIN_PASSWORD'].filter(k => !process.env[k]);
+  if (missing.length) return <main className="wrap adm"><h2>Setup incomplete</h2><p>Missing environment variables: <b>{missing.join(', ')}</b>. Add them in Vercel under Settings → Environment Variables, then redeploy.</p></main>;
   if (!(await isAdmin())) return (
     <main className="wrap adm"><h2>Admin sign in</h2>
       <form action={loginAction} className="card" style={{ marginTop: 20 }}><label className="f" htmlFor="pw">Password</label><input id="pw" name="pw" type="password" required autoFocus />
-        <div className="err">{q.e && 'Wrong password.'}</div><button className="btn">Sign in</button></form></main>);
+        <div className="err">{q.e === '2' ? 'Server setup problem: check AUTH_SECRET.' : q.e && 'Wrong password.'}</div><button className="btn">Sign in</button></form></main>);
   const tab = TABS.some(t => t[0] === q.tab) ? q.tab : 'project';
   const K = KINDS[tab];
-  const items = tab !== 'pricing' ? await list(tab) : [];
+  let items = [];
+  if (tab !== 'pricing') { try { items = await list(tab); } catch { return <main className="wrap adm"><h2>Database not reachable</h2><p>Check that Neon is connected to this project and DATABASE_URL is set, then redeploy.</p></main>; } }
   const edit = K && items.find(i => String(i.id) === q.edit);
   return (
     <main className="wrap adm">

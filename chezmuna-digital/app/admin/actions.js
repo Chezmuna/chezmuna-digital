@@ -4,7 +4,10 @@ import { login, logout, isAdmin } from '@/lib/auth';
 import { save, remove, getConfig, setConfig } from '@/lib/db';
 import { KINDS, GROUPS, setPath, fromLines, slugify } from '@/lib/kinds';
 async function guard() { if (!(await isAdmin())) redirect('/admin'); }
-export async function loginAction(fd) { redirect((await login(String(fd.get('pw') || ''))) ? '/admin' : '/admin?e=1'); }
+export async function loginAction(fd) {
+  let ok; try { ok = await login(String(fd.get('pw') || '').trim()); } catch { ok = null; }
+  redirect(ok ? '/admin' : ok === null ? '/admin?e=2' : '/admin?e=1');
+}
 export async function logoutAction() { await logout(); redirect('/admin'); }
 export async function saveItem(fd) {
   await guard();
