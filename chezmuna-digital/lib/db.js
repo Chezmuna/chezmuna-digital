@@ -23,9 +23,22 @@ export async function list(kind) {
 }
 export async function save(kind, id, data) {
   const s = await sql(); const j = JSON.stringify(data);
-  if (id) await s`UPDATE items SET data = ${j}::jsonb WHERE id = ${id} AND kind = ${kind}`;
-  else await s`INSERT INTO items (kind, data) VALUES (${kind}, ${j}::jsonb)`;
+  if (id) { await s`UPDATE items SET data = ${j}::jsonb WHERE id = ${id} AND kind = ${kind}`; return id; }
+  const [r] = await s`INSERT INTO items (kind, data) VALUES (${kind}, ${j}::jsonb) RETURNING id`;
+  return r.id;
 }
+export async function getImage(id) { const s = await sql(); const [r] = await s`SELECT data FROM items WHERE id = ${id} AND kind = 'image'`; return r?.data; }
+export const SITE_DEFAULTS = {
+  heroTitle: 'Digital platforms for organisations that *outgrew spreadsheets*.',
+  heroText: 'We design and build membership portals, business platforms and automation systems for associations, institutions, NGOs and growing companies in Nigeria and beyond.',
+  ctaText: 'Scope your project and get an estimate', heroImage: 0,
+  email: 'info@chezmunadigital.com.ng', phone: '', location: 'Lagos, Nigeria',
+};
+export async function getSite() {
+  try { const [c] = await list('site'); if (c) { const { id, created_at, ...r } = c; return { ...SITE_DEFAULTS, ...Object.fromEntries(Object.entries(r).filter(([, v]) => v)) }; } } catch {}
+  return SITE_DEFAULTS;
+}
+export async function setSite(d) { const s = await sql(); await s`DELETE FROM items WHERE kind = 'site'`; await save('site', null, d); }
 export async function remove(id) { const s = await sql(); await s`DELETE FROM items WHERE id = ${id}`; }
 export async function getConfig() {
   try { const [c] = await list('config'); if (c) { const { id, created_at, ...rest } = c; return rest; } } catch {}
