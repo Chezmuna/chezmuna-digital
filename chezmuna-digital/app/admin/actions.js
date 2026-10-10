@@ -1,5 +1,7 @@
 'use server';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+const rv = () => revalidatePath('/', 'layout');
 import { login, logout, isAdmin } from '@/lib/auth';
 import { save, remove, getConfig, setConfig, setSite } from '@/lib/db';
 import { KINDS, SITE_FIELDS, GROUPS, setPath, fromLines, slugify } from '@/lib/kinds';
@@ -24,19 +26,19 @@ export async function saveItem(fd) {
   const d = {};
   for (const [k, , t] of K.fields) d[k] = t === 'check' ? fd.get(k) === 'on' : t === 'image' ? await img(fd, k) : String(fd.get(k) || '').trim();
   if (kind === 'post') d.slug = slugify(d.slug || d.title);
-  await save(kind, Number(fd.get('id')) || null, d);
+  await save(kind, Number(fd.get('id')) || null, d); rv();
   redirect(`/admin?tab=${kind}`);
 }
-export async function deleteItem(fd) { await guard(); await remove(Number(fd.get('id'))); redirect(`/admin?tab=${fd.get('kind')}`); }
+export async function deleteItem(fd) { await guard(); await remove(Number(fd.get('id'))); rv(); redirect(`/admin?tab=${fd.get('kind')}`); }
 export async function savePricing(fd) {
   await guard();
   const cfg = structuredClone(await getConfig());
   for (const [id, , path] of GROUPS) { const v = fromLines(String(fd.get(id) || '')); if (Object.keys(v).length) setPath(cfg, path, v); }
-  await setConfig(cfg);
+  await setConfig(cfg); rv();
   redirect('/admin?tab=pricing&ok=1');
 }
 export async function saveSite(fd) {
   await guard(); const d = {};
   for (const [k, , t] of SITE_FIELDS) d[k] = t === 'image' ? await img(fd, k) : String(fd.get(k) || '').trim();
-  await setSite(d); redirect('/admin?tab=site&ok=1');
+  await setSite(d); rv(); redirect('/admin?tab=site&ok=1');
 }

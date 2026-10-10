@@ -65,3 +65,4 @@ input:focus,select:focus,textarea:focus{outline:2px solid var(--gold);border-col
 .item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.item form{display:inline}.small{padding:6px 14px;font-size:14px}
 .inq{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;background:var(--card);font-size:15px}.inq p{margin:4px 0}
 @media(max-width:900px){.hero,.why,.svc,.work,.steps,.opts,.fg{grid-template-columns:1fr}.hero{padding-top:48px}.visual{max-width:420px}.top nav a.h{display:none}section{padding:64px 0}.wiz{padding:24px}}
+.page>h1{font-size:clamp(34px,4.6vw,56px);margin-bottom:16px;letter-spacing:-.03em}

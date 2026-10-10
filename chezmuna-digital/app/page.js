@@ -1,6 +1,7 @@
 import { list, getSite } from '@/lib/db';
 import { Portal, Flow, Globe, Check, Arrow } from '@/components/Icons';
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
+export const metadata = { alternates: { canonical: '/' } };
 const SAMPLES = [
   { name: 'Professional association portal', client: 'Association, 3,000 members', sector: 'Associations', challenge: 'Dues were tracked in spreadsheets and renewals chased by phone.', result: 'Online registration, automatic renewal reminders and a live dues dashboard.' },
   { name: 'Faith community platform', client: 'Church network, 5 branches', sector: 'Faith groups', challenge: 'Member records and events were managed separately by each branch.', result: 'One member database, event registration and giving records across all branches.' },
