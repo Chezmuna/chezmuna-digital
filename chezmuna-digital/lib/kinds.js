@@ -1,5 +1,6 @@
 export const KINDS = {
   project: { label: 'Portfolio', fields: [['name', 'Project name'], ['client', 'Client'], ['sector', 'Sector'], ['challenge', 'Challenge', 'area'], ['result', 'Result', 'area'], ['image', 'Project image (screenshot or photo)', 'image']] },
+  faq: { label: 'FAQ', fields: [['question', 'Question'], ['answer', 'Answer', 'area']] },
   post: { label: 'Blog', fields: [['title', 'Title'], ['slug', 'Web address slug (optional)'], ['excerpt', 'Summary', 'area'], ['body', 'Article (blank line between paragraphs)', 'area'], ['image', 'Cover image', 'image'], ['published', 'Published', 'check']] },
 };
 export const GROUPS = [

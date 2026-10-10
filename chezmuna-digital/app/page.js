@@ -7,14 +7,25 @@ const SAMPLES = [
   { name: 'Faith community platform', client: 'Church network, 5 branches', sector: 'Faith groups', challenge: 'Member records and events were managed separately by each branch.', result: 'One member database, event registration and giving records across all branches.' },
   { name: 'Operations approvals system', client: 'Logistics company', sector: 'Business platforms', challenge: 'Requests and approvals moved through email and paper forms.', result: 'Role-based approvals, an audit trail and weekly management reports.' },
 ];
+const FAQS = [
+  { question: 'How much does a membership portal cost in Nigeria?', answer: 'The cost depends on how many people will use it, which features you need (such as online dues, events or certificates) and what it must connect with. Our quote tool gives you an indicative range in a few minutes. We confirm a formal quote after a short discovery call, and payments are tied to project milestones.' },
+  { question: 'How long does it take to build?', answer: 'It depends on the scope. A focused portal takes less time than a large multi-branch platform. We agree a timeline with you when we define the scope, and you review a working prototype before the full build begins.' },
+  { question: 'Can our members pay dues and renewals online?', answer: 'Yes. We can connect your platform to Nigerian payment gateways such as Paystack or Flutterwave, so members can pay online and receive renewal reminders automatically.' },
+  { question: 'Can you move our existing member records from Excel?', answer: 'Yes. Moving data from spreadsheets into the new platform is a service we offer. We check the records with you first so the platform starts with clean, reliable data.' },
+  { question: 'Who owns the platform and our data?', answer: 'Ownership, hosting and data terms are agreed in writing before the build starts, so there are no surprises. Ask us about this during your discovery call.' },
+  { question: 'Do you provide support after launch?', answer: 'Yes. We offer monthly plans covering hosting, maintenance, fixes and improvements, so the platform keeps working as your organisation grows.' },
+  { question: 'What should we prepare before getting started?', answer: 'Describe how you handle the process today, how many people will use the system and what you want it to achieve. The scoping questions in our quote tool walk you through exactly this.' },
+];
 const GRAD = ['linear-gradient(135deg,#15614a,#0b2e22)', 'linear-gradient(135deg,#e0a21b,#a8730a)', 'linear-gradient(135deg,#2b4a6b,#12263b)'];
 const SECT = ['Professional associations', 'Churches', 'NGOs', 'Schools and institutions', 'Trade bodies', 'Growing companies', 'Cooperatives', 'Membership clubs'];
 const Accent = ({ t }) => t.split(/\*(.+?)\*/g).map((s, i) => (i % 2 ? <em key={i}>{s}</em> : s));
 const ini = n => n.split(' ').slice(0, 2).map(w => w[0]).join('');
 export default async function Home() {
   const site = await getSite();
-  let projects = [], posts = [];
-  try { projects = await list('project'); posts = (await list('post')).filter(p => p.published).slice(0, 3); } catch {}
+  let projects = [], posts = [], faqs = [];
+  try { projects = await list('project'); posts = (await list('post')).filter(p => p.published).slice(0, 3); faqs = (await list('faq')).reverse(); } catch {}
+  if (!faqs.length) faqs = FAQS;
+  const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqs.map(f => ({ '@type': 'Question', name: f.question, acceptedAnswer: { '@type': 'Answer', text: f.answer } })) };
   const sample = !projects.length; if (sample) projects = SAMPLES;
   return (
     <main>
@@ -67,7 +78,12 @@ export default async function Home() {
         <div className="work">{posts.map((p, i) => <a className="case" key={p.id} href={`/blog/${p.slug}`} data-r={String(i % 3 + 1)}>
           <div className="thumb" style={p.image ? undefined : { background: GRAD[i % 3] }}>{p.image ? <img src={`/api/img/${p.image}`} alt="" loading="lazy" /> : <span>{ini(p.title)}</span>}</div>
           <div className="cb"><h3>{p.title}</h3><p>{p.excerpt}</p></div></a>)}</div></div></section>}
-      <section className="cta" style={{ paddingTop: posts.length ? 0 : 96 }}><div className="wrap"><div className="ctab" data-r>
+      <section id="faq"><div className="wrap faqw">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld).replace(/</g, '\\u003c') }} />
+        <div data-r><h2>Questions, <em>answered</em></h2><p className="lead">What organisations usually ask before they start a platform project.</p><a className="ghost" href="/quote">Ask about your project</a></div>
+        <div data-r="2">{faqs.map(f => <details className="fq" key={f.id || f.question}><summary>{f.question}</summary><p>{f.answer}</p></details>)}</div>
+      </div></section>
+      <section className="cta"><div className="wrap"><div className="ctab" data-r>
         <h2>Ready to scope your <em>platform</em>?</h2>
         <p>Answer a few questions and see an indicative price range straight away. We follow with a formal quote after a short discovery call.</p>
         <a className="btn lg" href="/quote">Get a quote <Arrow /></a></div></div></section>

@@ -5,7 +5,7 @@ import { KINDS, SITE_FIELDS, GROUPS, getPath, toLines } from '@/lib/kinds';
 import { loginAction, logoutAction, saveSite, saveItem, deleteItem, savePricing } from './actions';
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Admin', robots: { index: false } };
-const TABS = [['site', 'Site and hero'], ['project', 'Portfolio'], ['post', 'Blog'], ['inquiry', 'Enquiries'], ['pricing', 'Pricing']];
+const TABS = [['site', 'Site and hero'], ['project', 'Portfolio'], ['post', 'Blog'], ['faq', 'FAQ'], ['inquiry', 'Enquiries'], ['pricing', 'Pricing']];
 const fmt = n => '₦' + (n / 1e6).toFixed(1) + 'M';
 function Field({ f: [k, l, t], d }) {
   if (t === 'image') return <ImageField name={k} label={l} current={d[k] || ''} />;
@@ -36,7 +36,7 @@ export default async function Admin({ searchParams }) {
           {K.fields.map(f => <Field key={f[0]} f={f} d={edit || {}} />)}
           <div className="nav2"><button className="btn">Save</button>{edit && <a className="ghost" href={`/admin?tab=${tab}`}>Cancel</a>}</div></form>
         <div style={{ maxWidth: 760, margin: '28px auto 0' }}>{items.map(i => (
-          <div className="item" key={i.id}><span>{i.name || i.title}{tab === 'post' && !i.published && <em className="meta"> (draft)</em>}</span>
+          <div className="item" key={i.id}><span>{i.name || i.title || i.question}{tab === 'post' && !i.published && <em className="meta"> (draft)</em>}</span>
             <span><a className="ghost small" href={`/admin?tab=${tab}&edit=${i.id}`}>Edit</a>{' '}
               <form action={deleteItem}><input type="hidden" name="id" value={i.id} /><input type="hidden" name="kind" value={tab} /><button className="ghost small">Delete</button></form></span></div>))}
           {!items.length && <p className="meta">Nothing here yet.</p>}</div></>}
