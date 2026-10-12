@@ -33,7 +33,12 @@ export async function deleteItem(fd) { await guard(); await remove(Number(fd.get
 export async function savePricing(fd) {
   await guard();
   const cfg = structuredClone(await getConfig());
-  for (const [id, , path] of GROUPS) { const v = fromLines(String(fd.get(id) || '')); if (Object.keys(v).length) setPath(cfg, path, v); }
+  for (const [id, , path] of GROUPS) {
+    let v = fromLines(String(fd.get(id) || ''));
+    if (id === 'base') v = Object.fromEntries(['portal', 'app', 'site'].map(k => [k, v[k] > 0 ? v[k] : cfg.base[k]]));
+    if (id === 'size') v = Object.fromEntries(Object.entries(v).filter(([, x]) => x > 0));
+    if (Object.keys(v).length) setPath(cfg, path, v);
+  }
   await setConfig(cfg); rv();
   redirect('/admin?tab=pricing&ok=1');
 }

@@ -14,7 +14,7 @@ export const metadata = {
   applicationName: 'Chezmuna Digital',
   icons: { icon: [{ url: '/favicon.ico', sizes: '48x48' }, { url: '/icon.svg', type: 'image/svg+xml' }], apple: '/apple-icon.png' },
   keywords: ['membership portal development Nigeria', 'business platform development Lagos', 'association management software', 'church management system', 'NGO digital platform', 'business automation Nigeria', 'custom web application Lagos'],
-  openGraph: { siteName: 'Chezmuna Digital', type: 'website', locale: 'en_NG', url: BASE, title: 'Membership Portals & Business Platforms in Nigeria | Chezmuna Digital', description: DESC },
+  openGraph: { siteName: 'Chezmuna Digital', type: 'website', locale: 'en_NG', title: 'Membership Portals & Business Platforms in Nigeria | Chezmuna Digital', description: DESC },
   twitter: { card: 'summary_large_image', title: 'Chezmuna Digital', description: DESC },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 } },
   verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,

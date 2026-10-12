@@ -41,7 +41,12 @@ export async function getSite() {
 export async function setSite(d) { const s = await sql(); await s`DELETE FROM items WHERE kind = 'site'`; await save('site', null, d); }
 export async function remove(id) { const s = await sql(); await s`DELETE FROM items WHERE id = ${id}`; }
 export async function getConfig() {
-  try { const [c] = await list('config'); if (c) { const { id, created_at, ...rest } = c; return rest; } } catch {}
+  try { const [c] = await list('config'); if (c) {
+      const { id, created_at, ...r } = c, ok = o => o && Object.keys(o).length;
+      return { base: Object.fromEntries(['portal', 'app', 'site'].map(k => [k, r.base?.[k] > 0 ? r.base[k] : DEFAULTS.base[k]])), size: ok(r.size) && Object.values(r.size).every(x => x > 0) ? r.size : DEFAULTS.size, integ: ok(r.integ) ? r.integ : DEFAULTS.integ,
+        feat: Object.fromEntries(['portal', 'app', 'site'].map(t => [t, ok(r.feat?.[t]) ? r.feat[t] : DEFAULTS.feat[t]])) };
+    }
+  } catch {}
   return DEFAULTS;
 }
 export async function setConfig(cfg) { const s = await sql(); await s`DELETE FROM items WHERE kind = 'config'`; await save('config', null, cfg); }
